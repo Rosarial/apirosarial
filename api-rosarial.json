@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "api-rosarial",
+      "script": "npm",
+      "args": "start"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+npx sequelize-cli model:generate --name User --attributes name:string,sobrenome:string,email:string,password:string,cpf:string,nivel:string,ativo:boolean,is_supervisor:boolean,foto:string
+npx sequelize-cli model:generate --name Store --attributes name:string,address:string
+npx sequelize-cli model:generate --name StorePromoter --attributes userId:integer,storeId:integer
+npx sequelize-cli model:generate --name Checkin --attributes userId:integer,storeId:integer,latitude:float,longitude:float,info:string,photoPath:string,observations:string
+
+my-api
+│   .env
+│   package.json
+│   tsconfig.json
+│   server.ts
+└───src
+    ├───controllers
+    │       authController.ts
+    │       storeController.ts
+    │       checkinController.ts
+    ├───middleware
+    │       authMiddleware.ts
+    ├───models
+    │       index.ts
+    │       user.ts
+    │       store.ts
+    │       checkin.ts
+    ├───routes
+    │       authRoutes.ts
+    │       storeRoutes.ts
+    │       checkinRoutes.ts
+    └───services
+            authService.ts
+            storeService.ts
+            checkinService.ts

@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - '8080:80'
+    volumes:
+      - ./web:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+  php:
+    image: php:7.4-fpm
+    container_name: php
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:5.7
+    platform: linux/amd64
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    platform: linux/amd64
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '8081:80'
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  backend:
+    image: node:20
+    container_name: backend
+    working_dir: /usr/src/app
+    volumes:
+      - ../../backend:/usr/src/app
+    command: npm start
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

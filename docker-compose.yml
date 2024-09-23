@@ -1,0 +1,41 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_api
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_PORT
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+  app:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    working_dir: /usr/src/backend
+    container_name: api_rosarial
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=$MYSQL_PORT
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+      - DATABASE_URL=$DATABASE_URL
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_PORT
+    stdin_open: true
+    tty: true
